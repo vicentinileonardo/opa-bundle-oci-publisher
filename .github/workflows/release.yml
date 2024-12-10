@@ -1,0 +1,61 @@
+name: tag
+
+on:
+  push:
+    tags: ["[0-9]+.[0-9]+.[0-9]+"]
+
+env:
+  ORAS_VERSION: 1.2.1
+  OPA_VERSION: 0.70.0
+  REGISTRY: docker.io
+  REPOSITORY: ${{ secrets.REGISTRY_NAMESPACE }}/your-repository
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install ORAS CLI
+        run: |
+          wget https://github.com/oras-project/oras/releases/download/v${{ env.ORAS_VERSION }}/oras_${{ env.ORAS_VERSION }}_linux_amd64.tar.gz
+          tar -xzf oras_${{ env.ORAS_VERSION }}_linux_amd64.tar.gz
+          sudo install -m 755 oras /usr/local/bin/
+      
+      - name: Check ORAS version
+        run: oras version
+      
+      - name: Login to Container Registry
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | oras login ${{ env.REGISTRY }} -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
+
+      - name: Set up OPA
+        run: |
+          curl -L -o opa https://github.com/open-policy-agent/opa/releases/download/v${{ env.OPA_VERSION }}/opa_linux_amd64
+          chmod +x opa
+          sudo mv opa /usr/local/bin/
+      
+      - name: Check current folder
+        run: ls -la
+
+      - name: Check OPA version
+        run: opa version
+
+      - name: Build OPA Bundle
+        run: opa build src
+
+      - name: Check current folder after OPA build
+        run: ls -la
+
+      - name: Push OPA Bundle to Container Registry with ORAS
+        run: |
+          oras push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.ref_name }} \
+          --config config.json:application/vnd.oci.image.config.v1+json bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+          
+          oras push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest \
+          --config config.json:application/vnd.oci.image.config.v1+json bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+
+      - name: Cleanup
+        run: |
+          rm -rf bundle.tar.gz

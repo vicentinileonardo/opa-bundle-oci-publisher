@@ -15,7 +15,7 @@ It serves as a template for building and pushing OPA bundles to an OCI registry.
     + `REGISTRY_USERNAME`
     + `REGISTRY_PASSWORD`
     + `REGISTRY_NAMESPACE`
-For individual accounts, `REGISTRY_NAMESPACE` is the same as the `REGISTRY_USERNAME`.
+(For individual accounts, `REGISTRY_NAMESPACE` is the same as the `REGISTRY_USERNAME`.)
 
 - In order to trigger the GitHub Action, you need to push a tag to the repository, for example:
 ```bash

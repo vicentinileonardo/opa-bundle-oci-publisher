@@ -3,9 +3,16 @@
 ## Overview
 
 This repository contains a GitHub Action that builds and pushes an OPA bundle to an OCI registry.
+
 It serves as a template for building and pushing OPA bundles to an OCI registry.
 
 ## How to use
+
+- Clone this repository.
+
+- Insert your policy files in the `src/policies` directory.
+
+- If needed, insert your policy data in the `src/data.json` file.
 
 - Change the variable `REGISTRY` in the file `.github/workflows/release.yml` to the registry you want to push the bundle to. Default is `docker.io`.
 

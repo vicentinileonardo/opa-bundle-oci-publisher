@@ -9,7 +9,7 @@ It serves as a template for building and pushing OPA bundles to an OCI registry.
 
 - Change the variable `REGISTRY` in the file `.github/workflows/release.yml` to the registry you want to push the bundle to. Default is `docker.io`.
 
-- Change the variable `REPOSITORY` in the file `.github/workflows/release.yml` to the repository you want to push the bundle to. Default is `your-repository`.
+- Change the variable `REPOSITORY` in the file `.github/workflows/release.yml` to the repository you want to push the bundle to. Default is `REGISTRY_NAMESPACE/your-repository`.
 
 - Create GitHub repository secrets for the following:
     + `REGISTRY_USERNAME`
